@@ -7,9 +7,13 @@ import cors from 'cors';
 
 const app = express();
 AppDataSource.initialize();
-app.use(cors({
+
+const corsOption = {
   "origin": process.env.API_HOST
-}));
+}
+console.log(corsOption)
+
+app.use(cors(corsOption));
 app.use("/api/charities", charityRoutes)
 
 app.get('/', (_req, res) => {

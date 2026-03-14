@@ -10,8 +10,8 @@ export const charityController = {
     try {
         const page = Math.max(1, Number(req.query.page) || 1)
         const limit = Math.min(100, Number(req.query.limit) || 10) // 最多100筆
-
-        const result = await charityService.findWithPagination(page, limit)
+        const q = req.query.q as string ?? ""
+        const result = await charityService.findWithPagination(page, limit, q)
         res.json(result)
     } catch (error) {
       res.status(500).json({ message: "伺服器錯誤", error })

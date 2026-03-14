@@ -1,3 +1,4 @@
+import { Like } from "typeorm";
 import { AppDataSource } from "../db/data-source";
 import { Charity } from "../db/entities/charity";
 
@@ -7,12 +8,13 @@ export const charityService = {
   findAll: async () => {
     return await charityRepo.find()
   },
-  findWithPagination: async (page: number, limit: number) => {
+  findWithPagination: async (page: number, limit: number, q?: string) => {
     const [data, total] = await charityRepo.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       order: { id: "ASC" },
-      relations: ['services'] 
+      relations: ['services'],
+      ...(q =="" ? {}: {where: {name: Like(`%${q}%`)}})
     })
 
     return {
