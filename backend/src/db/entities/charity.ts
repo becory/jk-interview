@@ -69,7 +69,7 @@ export class Charity {
     
     @AfterLoad()
     setDescription() {
-        if (this.regions) {
+        if (this.services) {
         this.description = this.services.map(r => r.name).join("、");
     }
   }
