@@ -6,7 +6,7 @@ import cors from 'cors';
 
 
 const app = express();
-AppDataSource.initialize();
+// AppDataSource.initialize();
 
 const corsOption = {
   "origin": process.env.API_HOST

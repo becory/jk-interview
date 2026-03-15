@@ -29,4 +29,4 @@ RUN npm ci --only=production
 COPY --from=builder /app/dist ./dist
 
 EXPOSE 4000
-CMD npm run start; tail -f /dev/null
+CMD ["npm", "run", "start"]
