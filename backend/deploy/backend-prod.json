@@ -23,7 +23,7 @@
       ],
       "portMappings": [
         {
-          "hostPort": 0,
+          "hostPort": 4000,
           "containerPort": 4000,
           "protocol": "tcp"
         }
@@ -54,6 +54,10 @@
         {
           "name": "NODE_ENV",
           "value": "production"
+        },
+        {
+          "name": "API_HOST",
+          "value": "https://d1cdm1glqbkaza.cloudfront.net/"
         }
       ]
     }
