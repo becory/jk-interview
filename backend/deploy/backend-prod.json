@@ -1,7 +1,9 @@
 {
   "family": "backend-prod",
-  "networkMode": "bridge",
-  "requiresCompatibilities": ["EC2"],
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
   "tags": [
   ],
   "cpu": "256",
@@ -48,7 +50,12 @@
           "valueFrom": "arn:aws:ssm:ap-southeast-2:298984097578:parameter/JKOS/POSTGRES_DB"
         }
       ],
-      "environment": []
+      "environment": [
+        {
+          "name": "NODE_ENV",
+          "value": "production"
+        }
+      ]
     }
   ]
 }
