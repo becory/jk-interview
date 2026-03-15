@@ -56,7 +56,7 @@ jobs:
       - name: Get task-definition file path for
         id: init
         run: |
-          echo ::set-output name=task-definition::deploy/backend-prod.json
+          echo ::set-output name=task-definition::/backend/deploy/backend-prod.json
           echo ::set-output name=container-name::app
 
       - name: Inject secrets into task definition
