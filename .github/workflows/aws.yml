@@ -115,14 +115,14 @@ jobs:
       - name: Deploy ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          cluster: backend-prod
-          service: backend-prod-web
+          cluster: jkos-interview-prod
+          service: backend-prod-service-e27rcgt4
           task-definition: ${{needs.render-task-def.outputs.task-def-filename}}
           force-new-deployment: true
 
       - name: DB migration
         run: |
           aws ecs run-task \
-            --cluster backend-prod \
+            --cluster jkos-interview-prod \
             --task-definition backend-prod \
             --overrides '{ "containerOverrides": [ { "name": "app", "command": [ "npm", "run", "migration:run" ] } ]}'
