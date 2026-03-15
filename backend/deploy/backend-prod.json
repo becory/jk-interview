@@ -26,7 +26,28 @@
           "protocol": "tcp"
         }
       ],
-      "secrets": [],
+      "secrets": [
+        {
+          "name": "POSTGRES_HOST",
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:298984097578:parameter/JKOS/POSTGRES_HOST"
+        },
+        {
+          "name": "POSTGRES_PORT",
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:298984097578:parameter/JKOS/POSTGRES_PORT"
+        },
+        {
+          "name": "POSTGRES_USER",
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:298984097578:parameter/JKOS/POSTGRES_USER"
+        },
+        {
+          "name": "POSTGRES_PASSWORD",
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:298984097578:parameter/JKOS/POSTGRES_PASSWORD"
+        },
+        {
+          "name": "POSTGRES_DB",
+          "valueFrom": "arn:aws:ssm:ap-southeast-2:298984097578:parameter/JKOS/POSTGRES_DB"
+        }
+      ],
       "environment": []
     }
   ]
