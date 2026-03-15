@@ -76,7 +76,7 @@ jobs:
         run: cat ${{ steps.task-def.outputs.task-definition }}
 
       - name: Temporarily save task-definition
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v6
         with:
           name: task-definition.json
           path: ${{ steps.task-def.outputs.task-definition }}
