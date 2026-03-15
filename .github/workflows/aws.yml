@@ -106,7 +106,7 @@ jobs:
           role-skip-session-tagging: true
 
       - name: Retrieve saved task-definition
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v6
         id: download
         with:
           name: task-definition.json
