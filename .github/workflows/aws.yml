@@ -19,11 +19,6 @@ jobs:
     outputs:
       docker-image: ${{ steps.build-image.outputs.DOCKER_IMAGE }}
     steps:
-      - name: Clean Workspace
-        run: |-
-          sudo rm -rf ${GITHUB_WORKSPACE}/*
-          sudo chown runner:runner -R .*
-
       - name: Checkout
         uses: actions/checkout@v2
 
