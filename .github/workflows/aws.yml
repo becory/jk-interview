@@ -42,6 +42,7 @@ jobs:
           docker build --target production -t "${{secrets.AWS_ECR_REGISTRY}}/jkos-interview-backend:prod" ./backend
           docker tag "${{secrets.AWS_ECR_REGISTRY}}/jkos-interview-backend:prod" "${{secrets.AWS_ECR_REGISTRY}}/jkos-interview-backend:${IMAGE_TAG}"
           docker push "${{secrets.AWS_ECR_REGISTRY}}/jkos-interview-backend:${IMAGE_TAG}"
+          echo "DOCKER_IMAGE=${{secrets.AWS_ECR_REGISTRY}}/jkos-interview-backend:${IMAGE_TAG}" >> $GITHUB_OUTPUT
 
   render-task-def:
     needs:
