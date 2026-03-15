@@ -48,6 +48,7 @@ jobs:
     needs:
       - build-docker
     runs-on: ubuntu-latest
+    environment: production
     outputs:
       task-def-filename: ${{ steps.set-filename.outputs.filename }}
     steps:
