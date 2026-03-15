@@ -1,0 +1,131 @@
+name: aws
+
+on:
+  push:
+    branches:
+      - master
+  
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  REGISTRY: ${{secrets.AWS_ECR_REGISTRY}}
+
+jobs:
+  build-docker:
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    outputs:
+      docker-image: ${{ steps.build-image.outputs.DOCKER_IMAGE }}
+    steps:
+      - name: Clean Workspace
+        run: |-
+          sudo rm -rf ${GITHUB_WORKSPACE}/*
+          sudo chown runner:runner -R .*
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Assume Role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_ECR_ROLE }}
+          role-duration-seconds: 3600
+          role-skip-session-tagging: true
+          mask-aws-account-id: false
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker Image
+        id: build-image
+        run: |
+          export IMAGE_TAG=backend-$(date +%Y%m%d)
+          ./deploy/build.sh prod
+          docker tag "${{secrets.AWS_ECR_REGISTRY}}/app_backend:prod" "${{secrets.AWS_ECR_REGISTRY}}/app_backend:${IMAGE_TAG}"
+          docker push "${{secrets.AWS_ECR_REGISTRY}}/app_backend:${IMAGE_TAG}"
+
+  render-task-def:
+    needs:
+      - build-docker
+    runs-on: ubuntu-latest
+    outputs:
+      task-def-filename: ${{ steps.set-filename.outputs.filename }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Get task-definition file path for
+        id: init
+        run: |
+          echo ::set-output name=task-definition::deploy/backend-prod.json
+          echo ::set-output name=container-name::app
+
+      - name: Inject secrets into task definition
+        run: |
+          sed -i "s|\$TASK_ROLE_ARN|${{ secrets.TASK_ROLE_ARN }}|g" ${{ steps.init.outputs.task-definition }}
+          sed -i "s|\$AWS_ECR_REGISTRY|${{ secrets.AWS_ECR_REGISTRY }}|g" ${{ steps.init.outputs.task-definition }}
+
+      - name: Render Task Definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ steps.init.outputs.task-definition }}
+          container-name: ${{ steps.init.outputs.container-name }}
+          image: ${{ needs.build-docker.outputs.docker-image }}
+
+      - name: debug
+        run: cat ${{ steps.task-def.outputs.task-definition }}
+
+      - name: Temporarily save task-definition
+        uses: actions/upload-artifact@v2
+        with:
+          name: task-definition.json
+          path: ${{ steps.task-def.outputs.task-definition }}
+          retention-days: 1
+
+      - name: set task-def filename
+        id: set-filename
+        run: echo ::set-output name=filename::$(basename ${{ steps.task-def.outputs.task-definition }})
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/master'
+    needs:
+      - render-task-def
+    runs-on: ubuntu-latest
+
+    environment:
+      name: production
+      # url: http://
+    steps:
+      - name: Configure AWS Assume Role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-region: us-west-2
+          role-to-assume: ${{ secrets.AWS_BENKYO_CD_ROLE }}
+          role-duration-seconds: 3600
+          role-skip-session-tagging: true
+
+      - name: Retrieve saved task-definition
+        uses: actions/download-artifact@v2
+        id: download
+        with:
+          name: task-definition.json
+
+      - name: Deploy ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          cluster: backend-prod
+          service: backend-prod-web
+          task-definition: ${{needs.render-task-def.outputs.task-def-filename}}
+          force-new-deployment: true
+
+      - name: DB migration
+        run: |
+          aws ecs run-task \
+            --cluster backend-prod \
+            --task-definition backend-prod \
+            --overrides '{ "containerOverrides": [ { "name": "app", "command": [ "npm", "run", "migration:run" ] } ]}'

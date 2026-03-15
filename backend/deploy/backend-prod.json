@@ -1,0 +1,33 @@
+{
+  "family": "backend-prod",
+  "networkMode": "bridge",
+  "requiresCompatibilities": ["EC2"],
+  "tags": [
+  ],
+  "cpu": "256",
+  "memory": "512",
+  "taskRoleArn": "$TASK_ROLE_ARN",
+  "executionRoleArn": "$TASK_ROLE_ARN",
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "cpu": 256,
+      "memory": 512,
+      "memoryReservation": 256,
+      "image": "$AWS_ECR_REGISTRY/webapp:prod",
+      "essential": true,
+      "command": [
+        "npm", "run","start"
+      ],
+      "portMappings": [
+        {
+          "hostPort": 0,
+          "containerPort": 4000,
+          "protocol": "tcp"
+        }
+      ],
+      "secrets": [],
+      "environment": []
+    }
+  ]
+}
