@@ -63,8 +63,12 @@ jobs:
 
       - name: Inject secrets into task definition
         run: |
+          echo "=== BEFORE ==="
+          cat ${{ steps.init.outputs.task-definition }}
           sed -i "s|\$TASK_ROLE_ARN|${{ secrets.TASK_ROLE_ARN }}|g" ${{ steps.init.outputs.task-definition }}
           sed -i "s|\$AWS_ECR_REGISTRY|${{ secrets.AWS_ECR_REGISTRY }}|g" ${{ steps.init.outputs.task-definition }}
+          echo "=== AFTER ==="
+          cat ${{ steps.init.outputs.task-definition }}
 
       - name: Render Task Definition
         id: task-def
