@@ -28,6 +28,15 @@
           "protocol": "tcp"
         }
       ],
+      "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "awslogs-jkos-backend",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "ap-southeast-2",
+                    "awslogs-stream-prefix": "backend"
+                }
+          },
       "secrets": [
         {
           "name": "POSTGRES_HOST",
