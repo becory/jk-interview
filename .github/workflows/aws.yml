@@ -96,7 +96,7 @@ jobs:
 
     environment:
       name: production
-      # url: http://
+      url: https://d1cdm1glqbkaza.cloudfront.net/api
     steps:
       - name: Configure AWS Assume Role
         uses: aws-actions/configure-aws-credentials@v1
