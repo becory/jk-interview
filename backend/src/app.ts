@@ -2,18 +2,18 @@ import express from 'express';
 import "reflect-metadata";
 import charityRoutes from "./routes/charity"
 import { AppDataSource } from './db/data-source';
-import cors from 'cors';
+// import cors from 'cors';
 
 
 const app = express();
-// AppDataSource.initialize();
+AppDataSource.initialize();
 
-const corsOption = {
-  "origin": process.env.API_HOST
-}
-console.log(corsOption)
+// const corsOption = {
+//   "origin": process.env.API_HOST
+// }
+// console.log(corsOption)
 
-app.use(cors(corsOption));
+// app.use(cors(corsOption));
 app.use("/api/charities", charityRoutes)
 
 app.get('/', (_req, res) => {
