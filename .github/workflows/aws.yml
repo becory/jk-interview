@@ -126,5 +126,5 @@ jobs:
             --cluster jkos-interview-prod \
             --task-definition backend-prod \
             --launch-type FARGATE \
-            --network-configuration 'awsvpcConfiguration={subnets=[subnet-02da2ea17b213729c,subnet-002d9d1515ad91e55,subnet-0c2f0339cf9aa844b],securityGroups=[sg-046f4c409b5e3e2f3],assignPublicIp=DISABLED}' \
+            --network-configuration 'awsvpcConfiguration={subnets=[subnet-02da2ea17b213729c,subnet-002d9d1515ad91e55,subnet-0c2f0339cf9aa844b],securityGroups=[sg-046f4c409b5e3e2f3],assignPublicIp=ENABLED}' \
             --overrides '{ "containerOverrides": [ { "name": "app", "command": [ "npm", "run", "migration:run:prod" ] } ]}'
